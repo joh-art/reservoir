@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 // Replace 'your_user_id' with the actual user ID you want to fetch
-const USER_URL = `http://localhost:5000/user`;
+const USER_URL = `http://localhost:8000/user`;
 
 function NavBar() {
-  const [user, setUser] = useState(null); // Define user state
+  const [user, setUser] = useState({
+    name: "John",
+  }); // Define user state
 
   useEffect(() => {
     // Fetch the user data when the component mounts

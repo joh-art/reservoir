@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { DatePicker, Space } from "antd";
 import Room from "../Components/Room";
-import Loader from '../Components/Loader'
+import Loader from "../Components/Loader";
 
 function Home() {
   const [rooms, setRooms] = useState([]);
@@ -11,14 +11,13 @@ function Home() {
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
   const [duplicateRooms, setDuplicateRooms] = useState([]);
-  const [searchKey, setSearchKey] = useState('');
- 
+  const [searchKey, setSearchKey] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/rooms/rooms");
+        const response = await axios.get("http://localhost:8000/rooms/rooms");
         setRooms(response.data);
         setDuplicateRooms(response.data);
       } catch (error) {
@@ -40,7 +39,7 @@ function Home() {
 
   const handleDateRangeChange = (dates) => {
     if (!Array.isArray(duplicateRooms)) {
-      console.error('duplicateRooms is not an array or is undefined.');
+      console.error("duplicateRooms is not an array or is undefined.");
       return;
     }
 
@@ -56,7 +55,10 @@ function Home() {
       for (const room of duplicateRooms) {
         let isAvailable = true;
 
-        if (Array.isArray(room.currentbooking) && room.currentbooking.length > 0) {
+        if (
+          Array.isArray(room.currentbooking) &&
+          room.currentbooking.length > 0
+        ) {
           for (const booking of room.currentbooking) {
             // Check if the new booking range overlaps with any existing booking
             if (
@@ -83,9 +85,7 @@ function Home() {
       const searchValue = searchKey.toLowerCase();
       const roomType = room.type.toLowerCase();
 
-      return (
-        (roomName.includes(searchValue) || roomType.includes(searchValue)) 
-      );
+      return roomName.includes(searchValue) || roomType.includes(searchValue);
     });
 
     setRooms(filteredRooms); // Update 'rooms' state with filtered rooms
@@ -115,7 +115,9 @@ function Home() {
       </div>
       <div className="row justify-content-center mt-5">
         {loading ? (
-          <h1><Loader/></h1>
+          <h1>
+            <Loader />
+          </h1>
         ) : error ? (
           <h1>Error: {error.message}</h1>
         ) : (
