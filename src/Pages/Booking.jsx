@@ -17,7 +17,7 @@ function BookingPage() {
       setError(null);
 
       axios
-        .get(`http://localhost:5000/rooms/rooms/${roomId}`)
+        .get(`http://localhost:8000/rooms/rooms/${roomId}`)
         .then((response) => {
           const roomData = response.data;
           setRoom(roomData);

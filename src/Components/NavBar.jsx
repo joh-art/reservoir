@@ -1,33 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-// Replace 'your_user_id' with the actual user ID you want to fetch
-const USER_URL = `http://localhost:8000/user`;
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // Import the useAuth hook
 
 function NavBar() {
-  const [user, setUser] = useState({
-    name: "John",
-  }); // Define user state
-
-  useEffect(() => {
-    // Fetch the user data when the component mounts
-    axios
-      .get(USER_URL) // Make sure to define USER_URL with the appropriate API endpoint
-      .then((response) => {
-        // Set the user state with the response data
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
-  }, []);
+  const { user } = useAuth(); // Access the user object from the context
 
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="!#">
+        <Link className="navbar-brand" to="/">
           Reservoir
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -42,26 +25,22 @@ function NavBar() {
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ml-auto">
-            {user ? (
-              // Display the user's information if data is available
-              <li className="nav-item">
-                <span className="nav-link">Welcome, {user.name}</span>
-              </li>
-            ) : (
-              // If no data is available, display the registration and login links
-              <>
-                <li className="nav-item">
-                  <a className="nav-link" href="/Register">
+            <li className="nav-item">
+              {user ? (
+                // Display the user's information if data is available
+                <span className="nav-link">Welcome, {user.username}</span>
+              ) : (
+                // If no data is available, display the registration and login links
+                <>
+                  <Link className="nav-link" to="/Register">
                     Register
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/Login">
+                  </Link>
+                  <Link className="nav-link" to="/Login">
                     Login
-                  </a>
-                </li>
-              </>
-            )}
+                  </Link>
+                </>
+              )}
+            </li>
           </ul>
         </div>
       </nav>
