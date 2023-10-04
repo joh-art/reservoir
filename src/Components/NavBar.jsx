@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Import the useAuth hook
+import { AuthContext } from './AuthContext'; // Import the AuthContext
+import axios from 'axios';
 
 function NavBar() {
-  const { user } = useAuth(); // Access the user object from the context
+  const { protectRoute } = useContext(AuthContext); // Access the user object from the context
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (protectRoute.user) {
+      // Access the user's ID from protectRoute
+      const userId = protectRoute.user.id;
+
+      async function fetchUserById() {
+        try {
+          // Update the URL to fetch user data by ID
+          const response = await axios.get(`http://localhost:8000/protectRoute/${userId}`);
+          setUser(response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+
+      fetchUserById();
+    }
+  }, [protectRoute]);
 
   return (
     <div>

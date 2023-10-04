@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 
 function BookingDetails() {
   const [booking, setBooking] = useState([]); // Initialize booking state
-  const user = JSON.parse(localStorage.getItem('user'));
   const { userId } = useParams();
 
   useEffect(() => {

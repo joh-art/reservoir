@@ -1,56 +1,43 @@
-
-// AuthContext.js (Updated)
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import axios from "axios";
+import React, { createContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+function AuthContextProvider({ children }) {
+  const [protectRoute, setProtectRoute] = useState({ user: null });
 
-export function AuthProvider({ children }) {
-  const {userId} = useParams([])
-  const [user, setUser] = useState({
-    userId: null,
-    username: '',
-    // Other user properties
-  });
+  async function fetchData() {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        throw new Error('No JWT token found');
+      }
+
+      const loggedInRes = await axios.get('http://localhost:8000/protectRoute', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Include the user's data in the protectRoute context
+      setProtectRoute({ user: loggedInRes.data });
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Check if the user ID is valid (you can add more validation as needed)
-        if (!user || !user.userId) {
-          throw new Error('User ID is missing or invalid');
-        }
+    fetchData();
+  }, []);
 
-        // Fetch user data from the backend API
-        const response = await axios.get(`http://localhost:8000/users/getUserById/${userId}`);
-        const userData = response.data;
-
-        // Update user state based on previous state (functional update)
-        setUser(prevUser => ({
-          ...prevUser,
-          ...userData
-        }));
-      } catch (error) {
-        // Handle errors (e.g., user not authenticated or invalid user ID)
-        setUser(null); // Set user to null on error
-        console.error(error);
-      }
-    };
-
-    fetchData(); // Call the fetchData function when the component mounts
-  }, [userId]); // Include user?.userId in the dependency array
-
-  // Other authentication-related functions (login, logout) can be added here
-
-  const value = {
-    user,
-    // Add your authentication functions here (e.g., login, logout)
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ protectRoute, getLoggedIn: fetchData }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
+
+export default AuthContextProvider;
+export { AuthContext };

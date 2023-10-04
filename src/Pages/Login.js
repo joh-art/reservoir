@@ -32,7 +32,11 @@ function Login(props) {
         responseData.message === "Login successful"
       ) {
         // Store the JWT token securely in local storage
-        localStorage.setItem("currentUser", JSON.stringify(response));
+     // Assuming the server responds with a token upon successful login
+     const { token } = response.data;
+
+     // Save the token to local storage
+     localStorage.setItem('token', token);
         // Handle successful login, e.g., redirect to the dashboard
         navigate("/Home");
       } else {
