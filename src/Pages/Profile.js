@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { Tabs } from 'antd';
-import axios from 'axios';
-import { useAuth } from '../Components/AuthContext';
-import BookingDetails from './BookingDetails';
+import React, { useEffect } from "react";
+import { Tabs } from "antd";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
+import BookingDetails from "./BookingDetails";
 
 function Profile() {
   const { TabPane } = Tabs;
@@ -15,38 +15,37 @@ function Profile() {
           await axios.get(`http://localhost:5000/users`, {
             params: { userid: currentUser._id }, // Use params to send userid as a query parameter
           });
-         
+
           // Handle the rooms data as needed
         }
       } catch (error) {
-        console.error('Error fetching user rooms:', error);
+        console.error("Error fetching user rooms:", error);
         // Handle the error (e.g., show an error message)
       }
     };
 
     fetchData(); // Call the fetchData function inside useEffect
-
   }, [currentUser]);
 
   return (
-    <div className='ml-5 mt-3'>
-      <Tabs defaultActiveKey='1' type='card'>
-        <TabPane tab='Profile' key='1'>
+    <div className="ml-5 mt-3">
+      <Tabs defaultActiveKey="1" type="card">
+        <TabPane tab="Profile" key="1">
           <h1>My Profile</h1>
           <br />
           {currentUser ? (
             <>
               <h1>Name: {currentUser.username}</h1>
               <h1>Email: {currentUser.email}</h1>
-              <h1>Admin: {currentUser.isAdmin ? 'Yes' : 'No'}</h1>
+              <h1>Admin: {currentUser.isAdmin ? "Yes" : "No"}</h1>
             </>
           ) : (
             <p>Loading user data...</p>
           )}
         </TabPane>
-        <TabPane tab='Booking Detail' key='2'>
+        <TabPane tab="Booking Detail" key="2">
           <h1>My Booking</h1>
-          <BookingDetails/>
+          <BookingDetails />
         </TabPane>
       </Tabs>
     </div>

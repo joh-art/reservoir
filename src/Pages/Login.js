@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-function Login(props) {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // Use useNavigate within the functional component
+
+  const { setUser } = useAuth;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,7 +28,8 @@ function Login(props) {
 
       // Handle the response, e.g., store the JWT token and redirect the user
       const responseData = response.data;
-      console.log(responseData);
+      // console.log(responseData);
+      // console.log(response);
 
       if (
         response.status === 200 &&
@@ -33,6 +37,10 @@ function Login(props) {
       ) {
         // Store the JWT token securely in local storage
         localStorage.setItem("currentUser", JSON.stringify(response));
+        setUser(response);
+        console.log(user);
+        console.log(response);
+
         // Handle successful login, e.g., redirect to the dashboard
         navigate("/Home");
       } else {
