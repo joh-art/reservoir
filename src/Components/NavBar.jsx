@@ -1,33 +1,37 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-
-// Replace 'your_user_id' with the actual user ID you want to fetch
-const USER_URL = `http://localhost:8000/user`;
+import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthContext } from './AuthContext'; // Import the AuthContext
+import axios from 'axios';
 
 function NavBar() {
-  const [user, setUser] = useState({
-    name: "John",
-  }); // Define user state
+  const { protectRoute } = useContext(AuthContext); // Access the user object from the context
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Fetch the user data when the component mounts
-    axios
-      .get(USER_URL) // Make sure to define USER_URL with the appropriate API endpoint
-      .then((response) => {
-        // Set the user state with the response data
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
-  }, []);
+    if (protectRoute.user) {
+      // Access the user's ID from protectRoute
+      const userId = protectRoute.user.id;
+
+      async function fetchUserById() {
+        try {
+          // Update the URL to fetch user data by ID
+          const response = await axios.get(`http://localhost:8000/protectRoute/${userId}`);
+          setUser(response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+
+      fetchUserById();
+    }
+  }, [protectRoute]);
 
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="!#">
+        <Link className="navbar-brand" to="/">
           Reservoir
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -42,26 +46,22 @@ function NavBar() {
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ml-auto">
-            {user ? (
-              // Display the user's information if data is available
-              <li className="nav-item">
-                <span className="nav-link">Welcome, {user.name}</span>
-              </li>
-            ) : (
-              // If no data is available, display the registration and login links
-              <>
-                <li className="nav-item">
-                  <a className="nav-link" href="/Register">
+            <li className="nav-item">
+              {user ? (
+                // Display the user's information if data is available
+                <span className="nav-link">Welcome, {user.username}</span>
+              ) : (
+                // If no data is available, display the registration and login links
+                <>
+                  <Link className="nav-link" to="/Register">
                     Register
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/Login">
+                  </Link>
+                  <Link className="nav-link" to="/Login">
                     Login
-                  </a>
-                </li>
-              </>
-            )}
+                  </Link>
+                </>
+              )}
+            </li>
           </ul>
         </div>
       </nav>
