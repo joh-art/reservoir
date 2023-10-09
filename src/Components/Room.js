@@ -23,11 +23,11 @@ function Room({ room, checkIn, checkOut }) {
           <p>Price: {room.price}</p>
         </b>
         <div style={{ float: "right" }} className="">
-        {(checkIn && checkOut) && (
-          <Link to={`/Booking/${room._id}/${checkIn}/${checkOut}`}>
-            {/* Use room._id for the room ID */}
-            <button className="btn btn-primary m-3">Book Room</button>
-          </Link>
+          {checkIn && checkOut && (
+            <Link to={`/Booking/${room._id}/${checkIn}/${checkOut}`}>
+              {/* Use room._id for the room ID */}
+              <button className="btn btn-primary m-3">Book Room</button>
+            </Link>
           )}
           <button onClick={handleShow} className="btn btn-primary">
             View Details
@@ -42,7 +42,11 @@ function Room({ room, checkIn, checkOut }) {
           <Carousel>
             {room.imgurls.map((url) => (
               <Carousel.Item key={url}>
-                <img className="d-block w-100 bigimg" src={url} alt="Second slide" />
+                <img
+                  className="d-block w-100 bigimg"
+                  src={url}
+                  alt="Second slide"
+                />
               </Carousel.Item>
             ))}
           </Carousel>

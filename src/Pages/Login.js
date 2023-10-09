@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+
+import { AuthContext } from "../Components/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // Use useNavigate within the functional component
 
-  const { setUser } = useAuth;
+  const { setUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) navigate("/Home");
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,9 +46,11 @@ function Login() {
 
         // Save the token to local storage
         localStorage.setItem("token", token);
-        setUser(response);
-        console.log(user);
-        console.log(response);
+
+        const newUser = response.data.user;
+        setUser(newUser);
+
+        localStorage.setItem("user", JSON.stringify(newUser));
 
         // Handle successful login, e.g., redirect to the dashboard
         navigate("/Home");

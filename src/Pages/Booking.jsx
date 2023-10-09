@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import StripeCheckout from "react-stripe-checkout"; // Updated import
 import Loader from "../Components/Loader";
-import swal from 'sweetalert';
+import swal from "sweetalert";
+import { AuthContext } from "../Components/AuthContext";
 
 function BookingPage() {
   const [room, setRoom] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { roomId, checkIn, checkOut } = useParams();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     if (roomId != null) {
@@ -43,13 +45,14 @@ function BookingPage() {
 
   const onToken = async (token) => {
     try {
-      const response = await axios.post("http://localhost:5000/booking", { token });
+      const response = await axios.post("http://localhost:5000/booking", {
+        token,
+      });
       const data = response.data;
       alert(`Payment successful, ${data.email}`);
 
       // After successful payment, call the bookRoom function
       bookRoom();
-
     } catch (error) {
       console.error("Error:", error);
     }
@@ -72,11 +75,11 @@ function BookingPage() {
       setLoading(true);
       await axios.post("http://localhost:5000/booking", bookingData);
       setLoading(false);
-swal.fire('Congratulations' , 'Room Booked Successfully' )
+      swal.fire("Congratulations", "Room Booked Successfully");
       console.log("Booking created successfully!");
     } catch (error) {
       setLoading(false);
-      swal.fire('something went wrong' )
+      swal.fire("something went wrong");
       console.error("Error:", error);
     }
   }
@@ -99,7 +102,7 @@ swal.fire('Congratulations' , 'Room Booked Successfully' )
             <h1>Booking Details</h1>
             <hr />
             <b>
-              <p>Name: {JSON.parse(localStorage.getItem("currentUser")).username}</p>
+              <p>Name: {user.username}</p>
               <p>Capacity: {room.capacity}</p>
               <p>From: {checkIn}</p>
               <p>To: {checkOut}</p>
@@ -119,7 +122,6 @@ swal.fire('Congratulations' , 'Room Booked Successfully' )
             <StripeCheckout
               token={onToken}
               stripeKey="pk_test_51Nuc3DIW3dHV2cj5FgaFRUjFQk8OV5Yq7q1LGBa5Uz6H44HNbCnTubiwKQXzTNusiAODTsdvnrHsUjqHn2ufiFEr00i6LLal0z"
-     
               amount={totalDays * room.price * 100} // Amount in cents (e.g., $10.00)
               currency="NGN"
             >
