@@ -3,8 +3,10 @@ import axios from "axios";
 import { DatePicker, Space } from "antd";
 import Room from "../Components/Room";
 import Loader from "../Components/Loader";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate(); // Use useNavigate within the functional component
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -14,6 +16,7 @@ function Home() {
   const [searchKey, setSearchKey] = useState("");
 
   useEffect(() => {
+    if (!localStorage.getItem("user")) navigate("/login");
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -28,7 +31,7 @@ function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const formatDate = (date) => {
     const day = date.getDate().toString().padStart(2, "0");

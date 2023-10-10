@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Login(props) {
+import { AuthContext } from "../Components/AuthContext";
+
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // Use useNavigate within the functional component
+
+  const { setUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) navigate("/Home");
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,18 +33,25 @@ function Login(props) {
 
       // Handle the response, e.g., store the JWT token and redirect the user
       const responseData = response.data;
-      console.log(responseData);
+      // console.log(responseData);
+      // console.log(response);
 
       if (
         response.status === 200 &&
         responseData.message === "Login successful"
       ) {
         // Store the JWT token securely in local storage
-     // Assuming the server responds with a token upon successful login
-     const { token } = response.data;
+        // Assuming the server responds with a token upon successful login
+        const { token } = response.data;
 
-     // Save the token to local storage
-     localStorage.setItem('token', token);
+        // Save the token to local storage
+        localStorage.setItem("token", token);
+
+        const newUser = response.data.user;
+        setUser(newUser);
+
+        localStorage.setItem("user", JSON.stringify(newUser));
+
         // Handle successful login, e.g., redirect to the dashboard
         navigate("/Home");
       } else {

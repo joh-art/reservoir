@@ -1,59 +1,39 @@
-// import React, { useEffect } from 'react';
-// import { Tabs } from 'antd';
-// import axios from 'axios';
-// import { useAuth } from '../Components/AuthContext';
-// import BookingDetails from './BookingDetails';
+import React, { useContext } from "react";
+import { Tabs } from "antd";
 
-// function Profile() {
-//   const { TabPane } = Tabs;
-//   const { currentUser } = useAuth();
+import { AuthContext } from "../Components/AuthContext";
+import BookingDetails from "./BookingDetails";
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         if (currentUser) {
-//           await axios.get(`http://localhost:5000/users`, {
-//             params: { userid: currentUser._id }, // Use params to send userid as a query parameter
-//           });
-         
-//           // Handle the rooms data as needed
-//         }
-//       } catch (error) {
-//         console.error('Error fetching user rooms:', error);
-//         // Handle the error (e.g., show an error message)
-//       }
-//     };
+function Profile() {
+  const { TabPane } = Tabs;
+  const { user: currentUser } = useContext(AuthContext);
 
-//     fetchData(); // Call the fetchData function inside useEffect
+  return (
+    <div className="ml-5 mt-3">
+      <Tabs defaultActiveKey="1" type="card">
+        <TabPane tab="Profile" key="1">
+          <h1>My Profile</h1>
+          <br />
+          {currentUser ? (
+            <>
+              <h1>Name: {currentUser.username}</h1>
+              <h1>Email: {currentUser.email}</h1>
+              <h1>Admin: {currentUser.isAdmin ? "Yes" : "No"}</h1>
+            </>
+          ) : (
+            <p>Loading user data...</p>
+          )}
+        </TabPane>
+        <TabPane tab="Booking Detail" key="2">
+          <h1>My Booking</h1>
+          <BookingDetails />
+        </TabPane>
+      </Tabs>
+    </div>
+  );
+}
 
-//   }, [currentUser]);
-
-//   return (
-//     <div className='ml-5 mt-3'>
-//       <Tabs defaultActiveKey='1' type='card'>
-//         <TabPane tab='Profile' key='1'>
-//           <h1>My Profile</h1>
-//           <br />
-//           {currentUser ? (
-//             <>
-//               <h1>Name: {currentUser.username}</h1>
-//               <h1>Email: {currentUser.email}</h1>
-//               <h1>Admin: {currentUser.isAdmin ? 'Yes' : 'No'}</h1>
-//             </>
-//           ) : (
-//             <p>Loading user data...</p>
-//           )}
-//         </TabPane>
-//         <TabPane tab='Booking Detail' key='2'>
-//           <h1>My Booking</h1>
-//           <BookingDetails/>
-//         </TabPane>
-//       </Tabs>
-//     </div>
-//   );
-// }
-
-// export default Profile;
+export default Profile;
 // // import React, { useEffect, useState } from 'react';
 // // import axios from 'axios';
 // // import { useParams } from 'react-router-dom';
